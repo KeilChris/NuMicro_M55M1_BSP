@@ -1,0 +1,43 @@
+layer:
+  type: Board
+  description: NuMaker-X-M55M1D with HyperRAM, HS USB, TFT-LCD5 and CMOS-720P modules
+  for-board: Nuvoton::NuMaker-X-M55M1D:V1.0
+  for-device: Nuvoton::M55M1H2LJAE
+
+  processor:
+    trustzone: off
+
+  connections:
+    - connect: NuMaker-X-M55M1D Board
+      provides:
+        - CMSIS_USB_Device
+        - CMSIS_VIO
+        - Camera
+        - Display
+        - Heap: 16384
+
+  define:
+    - NVT_VECTOR_ON_FLASH
+
+  packs:
+    - pack: Nuvoton::NuMicro_M55M1_BSP@3.1.5-rc.1
+    - pack: Nuvoton::NuMicroM55_DFP@^3.1.5
+    - pack: ARM::CMSIS@^6.2.0
+    - pack: ARM::CMSIS-Compiler@^2.1.0
+
+  components:
+    - component: Device:Startup
+    - component: Device:Common:M55M1_M5531
+    - component: CMSIS:CORE
+    - component: CMSIS-Compiler:CORE
+    - component: CMSIS Driver:VIO:M55M1
+    - component: CMSIS Driver:USB Device:M55M1_M5531_HS
+    - component: Board Support:Memory:HyperRAM&NuMaker-X-M55M1D
+    - component: Board Support:Display:NuMaker-TFT-LCD5&LT7381
+    - component: Board Support:Camera:CMOS-720P&HM1055
+
+  groups:
+    - group: Board
+      files:
+        - file: ./Board.c
+        - file: ./Board.h

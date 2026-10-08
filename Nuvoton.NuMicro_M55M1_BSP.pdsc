@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<package schemaVersion="1.7.52" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Open-CMSIS-Pack/Open-CMSIS-Pack-Spec/v1.7.52/schema/PACK.xsd">
+  <!-- Must have - software pack name: -->
+  <name>NuMicro_M55M1_BSP</name>
+  <!-- Must have - software pack vendor name: -->
+  <vendor>Nuvoton</vendor>
+  <!-- Strongly recommended - pack description with Overview.md file: -->
+  <description overview="Documents/OVERVIEW.md">Board Support Pack for M55M1 Series</description>
+  <!-- Optional - pack download URL (if publicly available): -->
+  <url>https://github.com/OpenNuvoton/keil_packs/raw/master/m55m1_bsp/</url>
+  <!-- Optional - Git repo URL (if applicable): -->
+  <repository></repository>
+  <!-- Strongly recommended - support contact information: -->
+  <supportContact></supportContact>
+  <!-- Must have - licensing information (for software BOM): -->
+  <license>LICENSE</license>
+  <licenseSets>
+    <licenseSet id="all" default="true" gating="true">
+      <license name="LICENSE" title="Apache 2.0 open-source license" spdx="Apache-2.0"/>
+    </licenseSet>
+  </licenseSets>
+
+  <!-- Must have - pack release information for versioning: -->
+  <releases>
+    <release version="3.1.5-rc.1" date="2026-10-02">
+      Development candidate: Camera component 1.2.0 adds checked HM1055 sensor initialization,
+      single-buffer ownership, bounded frame-boundary abort, and timeout quarantine.
+      Requires NuMicroM55_DFP 3.1.5. Hardware qualification is pending; see CAMERA-CONTRACT.md.
+    </release>
+    <release version="3.1.4" date="2026-10-02">
+      Added NuMaker-X-M55M1D HyperRAM, VIO, CMOS-720P and NuMaker-TFT-LCD5 components.
+      Added non-blocking HM1055 capture events and callbacks and the complete polling LT7381 display path.
+      Added a board layer; application linker and debugger-load integration remain required.
+      Requires NuMicroM55_DFP 3.1.5. See INTEGRATION.md for validated scope and limitations.
+    </release>
+    <release version="3.1.3" date="2025-11-04">
+      Moved standard drivers, CMSIS drivers, and libraries to DFP pack.
+      Added Blink example.
+    </release>
+    <release version="3.1.2" date="2025-08-08">
+      Supported M55M1B.
+      Added CMSIS drivers, new sample codes.
+      Updated startup, standard drivers, libraries, sample codes.
+      Removed RTC_TimeAndTick sample code.
+    </release>
+  </releases>
+
+  <keywords>
+    <!-- Optional - keywords for indexing: -->
+    <keyword>Nuvoton</keyword>
+    <keyword>Board Support Pack</keyword>
+    <keyword>NuMicro_M55M1</keyword>
+    <keyword>M55M1 BSP</keyword>
+    <keyword>M55M1H2LJAE</keyword>
+    <keyword>NuMaker-X-M55M1D</keyword>
+  </keywords>
+
+  <requirements>
+    <!-- Strongly recommended - requirement to DFP (or other packs): -->
+    <packages>
+      <package vendor="Nuvoton" name="NuMicroM55_DFP" version="3.1.5"/>
+    </packages>
+  </requirements>
+
+  <conditions>
+    <condition id="NuMaker-X-M55M1D">
+      <description>Nuvoton NuMaker-X-M55M1D board</description>
+      <require Dvendor="Nuvoton:18" Dname="M55M1H2LJAE"/>
+      <require Bvendor="Nuvoton" Bname="NuMaker-X-M55M1D"/>
+    </condition>
+    <condition id="NuMaker-X-M55M1D VIO">
+      <description>NuMaker-X-M55M1D with the CMSIS GPIO driver</description>
+      <require condition="NuMaker-X-M55M1D"/>
+      <require Cclass="CMSIS Driver" Cgroup="GPIO"/>
+    </condition>
+    <condition id="NuMaker-X-M55M1D HyperRAM">
+      <description>NuMaker-X-M55M1D on-board Winbond HyperRAM</description>
+      <require condition="NuMaker-X-M55M1D"/>
+      <require Cclass="Device" Cgroup="Common"/>
+      <require Cclass="Device" Cgroup="StdDriver" Csub="CLK"/>
+      <require Cclass="Device" Cgroup="StdDriver" Csub="GPIO"/>
+      <require Cclass="Device" Cgroup="StdDriver" Csub="SPIM_HYPER"/>
+    </condition>
+    <condition id="NuMaker-X-M55M1D LT7381">
+      <description>NuMaker-X-M55M1D with NuMaker-TFT-LCD5 V1.2</description>
+      <require condition="NuMaker-X-M55M1D"/>
+      <require Cclass="Device" Cgroup="Common"/>
+      <require Cclass="Device" Cgroup="StdDriver" Csub="EBI"/>
+      <require Cclass="Device" Cgroup="StdDriver" Csub="GPIO"/>
+      <require Cclass="Device" Cgroup="StdDriver" Csub="PDMA"/>
+    </condition>
+    <condition id="NuMaker-X-M55M1D HM1055">
+      <description>NuMaker-X-M55M1D with CMOS-720P V1.0 (HM1055)</description>
+      <require condition="NuMaker-X-M55M1D"/>
+      <require Cclass="Device" Cgroup="Common"/>
+      <require Cclass="Device" Cgroup="StdDriver" Csub="CCAP"/>
+      <require Cclass="Device" Cgroup="StdDriver" Csub="GPIO"/>
+    </condition>
+  </conditions>
+
+  <components>
+    <component Cclass="CMSIS Driver" Cgroup="VIO" Csub="M55M1" Cversion="1.0.0" Capiversion="1.0.0" condition="NuMaker-X-M55M1D VIO">
+      <description>CMSIS VIO for the three LEDs and two buttons on NuMaker-X-M55M1D</description>
+      <RTE_Components_h>
+        #define RTE_VIO_M55M1
+      </RTE_Components_h>
+      <files>
+        <file category="include" name="Board/NuMaker-X-M55M1D/VIO/"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/VIO/vio_NuMaker-M55M1.c"/>
+      </files>
+    </component>
+
+    <component Cclass="Board Support" Cgroup="Memory" Csub="HyperRAM" Cvariant="NuMaker-X-M55M1D" Cversion="1.0.0" condition="NuMaker-X-M55M1D HyperRAM">
+      <description>Initialize the on-board Winbond 64-Mbit HyperRAM on SPIM0</description>
+      <RTE_Components_h>
+        #define RTE_NuMaker_M55M1_HyperRAM
+      </RTE_Components_h>
+      <files>
+        <file category="include" name="Board/NuMaker-X-M55M1D/HyperRAM/"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/HyperRAM/hyperram_code.c"/>
+      </files>
+    </component>
+
+    <component Cclass="Board Support" Cgroup="Display" Csub="NuMaker-TFT-LCD5" Cvariant="LT7381" Cversion="1.1.0" condition="NuMaker-X-M55M1D LT7381">
+      <description>NuMaker-TFT-LCD5 V1.2 800x480 RGB565 display through EBI and LT7381</description>
+      <RTE_Components_h>
+        #define RTE_NuMaker_TFT_LCD5_LT7381
+      </RTE_Components_h>
+      <files>
+        <file category="include" name="Board/NuMaker-X-M55M1D/Display/"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/Display/Display.c"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/Display/Font8_16.c"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/Display/drv_pdma.c"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/Display/LCD/LCD_LT7381.c"/>
+      </files>
+    </component>
+
+    <component Cclass="Board Support" Cgroup="Camera" Csub="CMOS-720P" Cvariant="HM1055" Cversion="1.2.0" condition="NuMaker-X-M55M1D HM1055">
+      <description>CMOS-720P V1.0 camera module with HM1055 sensor through CCAP</description>
+      <RTE_Components_h>
+        #define RTE_NuMaker_CMOS_720P_HM1055
+      </RTE_Components_h>
+      <files>
+        <file category="include" name="Board/NuMaker-X-M55M1D/Camera/"/>
+        <file category="include" name="Board/NuMaker-X-M55M1D/Camera/Sensor/"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/Camera/ImageSensor.c"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/Camera/Sensor/SWI2C.c"/>
+        <file category="sourceC" name="Board/NuMaker-X-M55M1D/Camera/Sensor/Sensor_HM1055.c"/>
+      </files>
+    </component>
+  </components>
+
+  <csolution>
+    <clayer type="Board" path="Layers/NuMaker-X-M55M1D" file="Board.clayer.yml" copy-to="Board/NuMaker-X-M55M1D" condition="NuMaker-X-M55M1D"/>
+  </csolution>
+
+  <!-- Must have - boards section: -->
+  <boards>
+    <!-- Must have - board information: -->
+    <board vendor="Nuvoton" name="NuMaker-X-M55M1D" revision="V1.0"
+           salesContact="https://direct.nuvoton.com/en/contact-us" orderForm="https://direct.nuvoton.com/en/numaker-x-m55m1d">
+      <!-- Strongly recommended - board description: -->
+      <description>NuMaker-X-M55M1 Development Board with M55M1H2LJAE MCU</description>
+      <image small="Images/numaker-x-m55m1d_small.png"
+             large="Images/numaker-x-m55m1d_large.png"/>
+      <book category="overview"  name="https://direct.nuvoton.com/en/numaker-x-m55m1d" title="NuMaker-X-M55M1D"/>
+      <book category="schematic" name="https://www.nuvoton.com/resource-download.jsp?tp_GUID=HL102025092207032917&amp;currentFolder=/products/microcontrollers/arm-cortex-m55-mcus/m55m1-series/" title="Schematic"/>
+      <book category="manual"    name="https://www.nuvoton.com/resource-download.jsp?tp_GUID=UG132025091911464523&amp;currentFolder=/products/microcontrollers/arm-cortex-m55-mcus/m55m1-series/" title="User Manual"/>
+      <book category="other"     name="README.md" title="Guide"/>
+      <book category="other"     name="INTEGRATION.md" title="NuMaker integration and validation limits"/>
+      <book category="other"     name="CAMERA-CONTRACT.md" title="Camera 1.2.0 candidate contract and validation limits"/>
+      <!-- Must have - on-board device information: -->
+      <mountedDevice    deviceIndex="0" Dvendor="Nuvoton:18" Dname="M55M1H2LJAE"/>
+      <!-- Strongly recommended - on-board device compatibility information: -->
+      <compatibleDevice deviceIndex="0" Dvendor="Nuvoton:18" Dname="M55M1*"/>
+      <memory name="HyperRAM" access="rwx" start="0x82000000" size="0x00800000"/>
+      <!-- Strongly recommended - board features: -->
+      <feature type="ODbg"          n="1"         name="On-board Nu-Link2-Me"/>
+      <feature type="PWR"           n="5"         name="USB Powered"/>
+      <feature type="PWR"           n="3.3" m="5" name="POWER Connector for external supply"/>
+      <feature type="LED"           n="3"         name="User LEDs"/>
+      <feature type="Button"        n="2"         name="User Buttons"/>
+      <feature type="DIO"           n="176"       name="4 extended connectors to all chip pins"/>
+      <feature type="USB"           n="1"         name="High-Speed USB OTG with USB-C Connector"/>
+      <feature type="USB"           n="1"         name="Full-Speed USB OTG with USB-C Connector"/>
+      <feature type="RAM"           n="8"         name="64-Mbit (8 MB) HyperRAM"/>
+      <feature type="ConnOther"     n="1"         name="ESP-12F Wi-Fi® module from Espressif"/>
+      <feature type="MIC"           n="1"         name="MEMS Digital microphones"/>
+      <feature type="Accelerometer" n="1"         name="Accelerometer(MPU6500)"/>
+      <feature type="Gyro"          n="1"         name="Gyroscope(MPU6500)"/>
+      <feature type="ETH"           n="1"         name="10/100 Ethernet Port"/>
+      <feature type="CAN"           n="1"         name="CAN FD Transceiver"/>
+      <feature type="MemCard"       n="1"         name="SDIO interface microSD card"/>
+      <feature type="ArduinoFF"     n="1"         name="ARDUINO® Uno V3 expansion connectors"/>
+      <feature type="Other"         n="1"         name="mikroBUS® expansion connectors"/>
+      <feature type="ConnOther"     n="1"         name="CMOS I/F Connector"/>
+      <feature type="ConnOther"     n="1"         name="LCD I/F Connector"/>
+      <feature type="LineIn"        n="1"         name="Audio CODEC with Line-In"/>
+      <feature type="LineOut"       n="1"         name="Audio CODEC with Line-Out"/>
+      <!-- Strongly recommended - on-board debug probe information (if applicable): -->
+      <debugInterface adapter="Nu-Link" connector="USB-C"/>
+      <debugProbe connector="USB-C" debugClock="10000000" debugLink="swd" name="CMSIS-DAP"/>
+    </board>
+  </boards>
+  
+  <examples>
+    <example name="Blinky" folder="Examples/Blinky" doc="README.md">
+      <description>Blinky example with VIO</description>
+      <board name="NuMaker-X-M55M1D" vendor="Nuvoton"/>
+      <project>
+        <environment name="csolution" load="VSCode/Blinky.csolution.yml"/>
+        <environment name="uv"        load="KEIL/Blinky.uvprojx"/>
+        <environment name="iar"       load="IAR/Blinky.ewp"/>
+      </project>
+    </example>
+  </examples>
+
+</package>
